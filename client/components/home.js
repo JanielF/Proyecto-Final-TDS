@@ -1,39 +1,71 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = () => {
-  const [habits, setHabits] = useState([
-    { id: 1, name: 'Hábito 1', completed: false },
-    { id: 2, name: 'Hábito 2', completed: false },
-    { id: 3, name: 'Hábito 3', completed: false },
-  ]);
+const BookIcon = () => (
+  <Image source={require('../assets/libro.png')} style={styles.icon} />
+);
 
-  const toggleHabitCompletion = (id) => {
-    setHabits(
-      habits.map((habit) =>
-        habit.id === id ? { ...habit, completed: !habit.completed } : habit
-      )
-    );
+const DumbbellIcon = () => (
+  <Image source={require('../assets/dumbell.png')} style={styles.icon} />
+);
+
+const MedalIcon = () => (
+  <Image source={require('../assets/meditacion.png')} style={styles.icon} />
+);
+
+const Component = () => {
+  const navigation = useNavigation();
+
+  const handleStartExercise = () => {
+    navigation.navigate('Ejercicio');
+  };
+
+  const handleStartMeditation = () => {
+    navigation.navigate('Meditacion');
+  };
+
+  const handleStartReading = () => {
+    navigation.navigate('Lectura');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mis Hábitos</Text>
-      {habits.map((habit) => (
-        <TouchableOpacity
-          key={habit.id}
-          onPress={() => toggleHabitCompletion(habit.id)}
-          style={[
-            styles.habitContainer,
-            { backgroundColor: habit.completed ? '#9CCC65' : '#FFFFFF' },
-          ]}
-        >
-          <Text style={styles.habitName}>{habit.name}</Text>
-          <Text style={styles.habitStatus}>
-            {habit.completed ? 'Completado' : 'Pendiente'}
-          </Text>
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>Transforma tus hábitos</Text>
+        <Text style={styles.description}>
+          Descubre cómo nuestra aplicación puede ayudarte a desarrollar y mantener hábitos saludables que transformarán tu vida.
+        </Text>
+      </View>
+      <View style={styles.gridContainer}>
+        <TouchableOpacity style={styles.card} onPress={handleStartExercise}>
+          <DumbbellIcon />
+          <Text style={styles.cardTitle}>Ejercicio</Text>
+          <Text style={styles.cardDescription}>Mantén un registro de tus sesiones de ejercicio y monitorea tu progreso.</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Click en el Icono</Text>
+          </TouchableOpacity>
         </TouchableOpacity>
-      ))}
+        <TouchableOpacity style={styles.card} onPress={handleStartMeditation}>
+          <MedalIcon />
+          <Text style={styles.cardTitle}>Meditación</Text>
+          <Text style={styles.cardDescription}>Desarrolla una práctica de meditación diaria y mejora tu bienestar mental.</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Click en el Icono</Text>
+          </TouchableOpacity>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={handleStartReading}>
+          <BookIcon />
+          <Text style={styles.cardTitle}>Lectura</Text>
+          <Text style={styles.cardDescription}>Lleva un registro de los libros que lees y establece objetivos de lectura.</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Click en el Icono</Text>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.settingsButton}>
+        <Text style={styles.settingsButtonText}>Configuración</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -41,34 +73,82 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFFFFF',
+  },
+  textContainer: {
+    marginBottom: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#666666',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 40,
+  },
+  card: {
+    width: '30%',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
     marginBottom: 20,
   },
-  habitContainer: {
-    width: '100%',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#ccc',
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    color: '#333333',
   },
-  habitName: {
+  cardDescription: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 10,
+    color: '#666666',
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#FF6347',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  settingsButton: {
+    width: '100%',
+    backgroundColor: '#333333',
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginBottom: 20,
+  },
+  settingsButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
     fontSize: 18,
   },
-  habitStatus: {
-    fontSize: 16,
-    color: '#555',
+  icon: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
   },
 });
 
-export default HomeScreen;
+export default Component;
