@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const BookIcon = () => (
@@ -30,7 +30,7 @@ const Component = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.title}>Transforma tus hábitos</Text>
         <Text style={styles.description}>
@@ -42,65 +42,56 @@ const Component = () => {
           <DumbbellIcon />
           <Text style={styles.cardTitle}>Ejercicio</Text>
           <Text style={styles.cardDescription}>Mantén un registro de tus sesiones de ejercicio y monitorea tu progreso.</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Click en el Icono</Text>
-          </TouchableOpacity>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card} onPress={handleStartMeditation}>
           <MedalIcon />
           <Text style={styles.cardTitle}>Meditación</Text>
           <Text style={styles.cardDescription}>Desarrolla una práctica de meditación diaria y mejora tu bienestar mental.</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Click en el Icono</Text>
-          </TouchableOpacity>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card} onPress={handleStartReading}>
           <BookIcon />
           <Text style={styles.cardTitle}>Lectura</Text>
           <Text style={styles.cardDescription}>Lleva un registro de los libros que lees y establece objetivos de lectura.</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Click en el Icono</Text>
-          </TouchableOpacity>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.settingsButton}>
         <Text style={styles.settingsButtonText}>Configuración</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
     backgroundColor: '#FFFFFF',
+    paddingBottom: 20,
   },
   textContainer: {
-    marginBottom: 40,
+    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#333333',
     marginBottom: 10,
   },
   description: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     color: '#666666',
   },
   gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 40,
+    width: '100%',
+    alignItems: 'center',
   },
   card: {
-    width: '30%',
+    width: '90%',
     backgroundColor: '#F5F5F5',
     borderRadius: 15,
     padding: 20,
@@ -108,35 +99,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
+    marginTop: 10,
     color: '#333333',
   },
   cardDescription: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
     marginTop: 10,
     color: '#666666',
   },
-  button: {
-    marginTop: 20,
-    backgroundColor: '#FF6347',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   settingsButton: {
-    width: '100%',
+    width: '90%',
     backgroundColor: '#333333',
     paddingVertical: 15,
     borderRadius: 25,
-    marginBottom: 20,
   },
   settingsButtonText: {
     color: '#FFFFFF',
@@ -147,7 +125,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 50,
     height: 50,
-    marginBottom: 20,
+    marginBottom: 10,
   },
 });
 
