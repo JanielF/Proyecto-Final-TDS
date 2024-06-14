@@ -12,7 +12,7 @@ const getAllusers = async (req, res) => {
             lastname: users.lastname,
             age: users.age
         }))
-        res.status(201).json({
+        res.status(200).json({
             success:true,
             message:'All users',
             data: userData});

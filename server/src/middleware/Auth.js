@@ -3,14 +3,18 @@ const jwt = require('jsonwebtoken');
 const {UserModel} =  require('../models/User');
 
 const Register = async (req, res) => {
-    const {username, password,email,name,lastname,age} = req.body;
+    const {username, password, email, name, lastname, age} = req.body;
     try {
-        const passwordHaashed = await bcrypt.hash(password, 'sha256');
+        const passwordHaashed = await bcrypt.hash(password, 10);
 
+        const existingUser = await UserModel.findOne({username: username});
+        if(existingUser) {
+            throw new Error('Usuario ya existe');
+        }
         //Modelo del usuario
         const newUser = new UserModel({
             username,
-            passwordHaashed,
+            password: passwordHaashed,
             email,
             name,
             lastname,
@@ -63,3 +67,28 @@ const Login = async (req, res) => {
         })
     }
 }
+
+const authMiddleware = async (req, res) => {
+    const token = req.body.token;
+
+    if(!token){
+        return res.status(401).json({
+            success: false,
+            message: 'Token no encontrado',
+            data: null
+        });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.body.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Token invalido',
+            data: null
+        });
+    }   
+}
+
+module.exports = {Login, Register, authMiddleware};
