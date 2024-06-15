@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const UserRouter = require('./src/routes/User.js');
 const AuthRouter = require('./src/routes/Auth.js');
+const HabitRouter = require('./src/routes/Habit.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 dotenv.config();
@@ -23,5 +24,6 @@ connectDB()
         process.exit(1); 
     });
 
-app.use('/api/users',UserRouter)
-app.use('/api/auth', AuthRouter)
+app.use('/api/users',UserRouter);
+app.use('/api/auth', AuthRouter);
+app.use('/api/habit', HabitRouter);
