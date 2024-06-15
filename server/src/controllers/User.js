@@ -5,12 +5,12 @@ const getAllusers = async (req, res) => {
         const users = await UserModel.find();
 
         const userData = users.map(user =>({
-            _id: users._id,
-            username: users.username,
-            email: users.email,
-            name: users.name,
-            lastname: users.lastname,
-            age: users.age
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            name: user.name,
+            lastname: user.lastname,
+            age: user.age
         }))
         res.status(200).json({
             success:true,
