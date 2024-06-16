@@ -68,27 +68,34 @@ const Login = async (req, res) => {
     }
 }
 
-const authMiddleware = async (req, res) => {
-    const token = req.body.token;
+const authMiddleware = async (req, res, next) => {
+    const { token } = req.body;
 
-    if(!token){
+    if (!token) {
         return res.status(401).json({
             success: false,
             message: 'Token no encontrado',
             data: null
         });
     }
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.body.user = decoded;
-        next();
+        req.user = decoded;  // Almacena la información del usuario en req.user
+        next();  // Pasa al siguiente middleware o ruta
     } catch (error) {
+        let errorMessage = 'Token invalido';
+        if (error.name === 'TokenExpiredError') {
+            errorMessage = 'Token expirado';
+        } else if (error.name === 'JsonWebTokenError') {
+            errorMessage = 'Token invalido';
+        }
         return res.status(401).json({
             success: false,
-            message: 'Token invalido',
+            message: errorMessage,
             data: null
         });
-    }   
+    }
 }
 
 module.exports = {Login, Register, authMiddleware};

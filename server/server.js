@@ -26,4 +26,4 @@ connectDB()
 
 app.use('/api/users',UserRouter);
 app.use('/api/auth', AuthRouter);
-app.use('/api/habit', HabitRouter);
+app.use('/api/habits', HabitRouter);

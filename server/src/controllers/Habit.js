@@ -1,4 +1,5 @@
 //Contolador de Habit
+const { mongoose } = require('mongoose');
 const{HabitModel} = require('../models/Habit');
 const getAllHabit = async(req, res) => {
     try {
@@ -6,7 +7,8 @@ const getAllHabit = async(req, res) => {
         res.status(200).json({
             success: true,
             message: 'Habitas obtenidas',
-            data: habits
+            data: habits,
+            userToken: req.user
         })
     } catch (error) {
         res.status(500).json({
@@ -31,7 +33,8 @@ const GetHabit = async(req, res) => {
         res.status(500).json({
             success:false,
             message:error.message,
-            data:"Error encontrado"
+            data:"Error encontrado",
+            userToken: req.user
         })
     }
 }
@@ -48,7 +51,8 @@ const CreateHabit = async(req, res) =>{
         res.status(201).json({
             success:true,
             message:'Habit creada',
-            data: newHabit
+            data: newHabit,
+            userToken: req.user
         })
     } catch (error) {
         res.status(500).json({
@@ -68,7 +72,8 @@ const EditHabit = async(req, res) => {
         res.status(200).json({
             success:true,
             message:'Habit actualizada',
-            data: updatedHabit
+            data: updatedHabit,
+            userToken: req.user
         })
     } catch (error) {
         res.status(500).json({
@@ -88,17 +93,54 @@ const DeleteHabit = async(req, res) => {
         res.status(200).json({
             success:true,
             message:'Habit eliminada',
-            data: deletedHabit
-        })
+            data: deletedHabit,
+            userToken: req.user
+        });
     } catch (error) {
         res.status(500).json({
             success:false,
             message:error.message,
             data: "Error encontrado"
-        })
+        });
     }
 }
 
-module.exports = {getAllHabit, GetHabit, CreateHabit, EditHabit, DeleteHabit}
+const getHabitById = async (req, res) => {
+    try {
+        const {userId} = req.user.id; 
+        const habits = await HabitModel.find({ userId: userId });
+        res.status(200).json({
+            success: true,
+            message: 'Hábitos obtenidos',
+            data: habits
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            data: "Error encontrado"
+        });
+    }
+}
+
+const getHabitByUser = async (req, res) => {
+    try {
+        const habits = await HabitModel.find({ username: req.user.username });
+
+        res.status(200).json({
+            success: true,
+            message: 'Hábitos obtenidos',
+            data: habits
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            data: "Error encholaontrado"
+        });
+    }
+}
+
+module.exports = {getAllHabit, GetHabit, CreateHabit, EditHabit, DeleteHabit,getHabitByUser, getHabitById}
 
 
