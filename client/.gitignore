@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 
+#Ip v4
+.env
 # Native
 *.orig.*
 *.jks

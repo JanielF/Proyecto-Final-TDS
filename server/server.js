@@ -1,5 +1,6 @@
 const { connectDB } = require('./db/Config.js');
 const express = require('express');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const UserRouter = require('./src/routes/User.js');
 const AuthRouter = require('./src/routes/Auth.js');
@@ -8,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 dotenv.config();
 app.use(express.json());
-
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
