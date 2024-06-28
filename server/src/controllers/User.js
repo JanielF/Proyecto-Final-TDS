@@ -42,7 +42,9 @@ const EditUser = async (req, res) => {
         res.status(201).json({
                     success:true,
                     message:'Usuario actualizado',
-                    data: updatedUserData});
+                    data: updatedUserData,
+                    userToken: req.user
+                });
     } catch (error) {
         res.status(500).json({success:false,message:error.message,data:null});
     }
@@ -57,7 +59,9 @@ const DeleteUser = async(req, res) => {
         res.status(201).json({
                     success:true,
                     message:'Usuario eliminado',
-                    data: null});
+                    data: null,
+                    userToken: req.user
+                });
     } catch (error) {
         res.status(500).json({success:false,message:error.message,data:null});
     }   
