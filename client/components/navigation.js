@@ -12,6 +12,7 @@ import LoginScreen from '../components/login';
 import MeditacionScreen from '../components/meditacion';
 import RegisterScreen from '../components/register';
 import HomeHabitat from './homehabit';
+import CreateHabit from './CreateHabit';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +26,8 @@ export default function Navigation() {
         <Stack.Screen name="Ejercicio" component={EjercicioScreen} />
         <Stack.Screen name="Meditacion" component={MeditacionScreen} />
         <Stack.Screen name="Lectura" component={LecturaScreen} />
-        <Stack.Screen name="HomeHabit" component={HomeHabitat} 
+        <Stack.Screen name="HomeHabit" component={HomeHabitat} />
+        <Stack.Screen name="CreateHabit" component={CreateHabit} 
           options={({ navigation }) => ({
             title: 'My Habits',
             headerRight: () => (
