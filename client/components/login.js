@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+const ipv4 = process.env.Ipv4 || '192.168.1.108:3000';
+
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -9,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     console.log('HandleLogin called');
     try {
-      const response = await fetch('http://192.168.1.108:3000/api/auth/login', {
+      const response = await fetch(`http://${ipv4}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +30,7 @@ const LoginScreen = ({ navigation }) => {
       if (responseJson.success) {
         await AsyncStorage.setItem('token', responseJson.data);
         Alert.alert('Login Success');
-        navigation.navigate('Home');
+        navigation.navigate('HomeHabit');
       } else {
         Alert.alert(responseJson.message);
       }
