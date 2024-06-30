@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const BookIcon = () => (
   <Image source={require('../assets/libro.png')} style={styles.icon} />
@@ -54,8 +54,8 @@ const Component = () => {
           <Text style={styles.cardDescription}>Lleva un registro de los libros que lees y establece objetivos de lectura.</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.settingsButton}>
-        <Text style={styles.settingsButtonText}>Configuración</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
     </ScrollView>
   );
