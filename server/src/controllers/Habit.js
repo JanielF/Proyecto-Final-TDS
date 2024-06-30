@@ -136,7 +136,7 @@ const getHabitByUser = async (req, res) => {
         res.status(500).json({
             success: false,
             message: error.message,
-            data: "Error encholaontrado"
+            data: "Error encontrado"
         });
     }
 }
