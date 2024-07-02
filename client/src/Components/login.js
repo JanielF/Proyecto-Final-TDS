@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     console.log('HandleLogin called');
     try {
-      const response = await fetch(`http://${ipv4}/api/auth/login`, {
+      const response = await fetch(`http://10.0.0.15:3000/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
