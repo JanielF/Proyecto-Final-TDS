@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { fetchHabits } from '../Apis/habits';
 
 const ipv4 = process.env.Ipv4 || '192.168.1.108:3000';
 
@@ -11,46 +11,18 @@ const HomeHabitat = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                if (!token) {
-                    Alert.alert('Token no encontrado');
-                    return;
-                }
-                const response = await fetch(`http://${ipv4}/api/habits/byuser`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                });
-
-                const responseData = await response.json();
-                if (responseData.success) {
-                    setHabits(responseData.data);
-                } else {
-                    Alert.alert('Error', responseData.message);
-                    return;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Alert.alert('Error', error.message);
-            } finally {
-                setLoading(false);
+        const fetchData = async () =>{
+            const responseData = await fetchHabits(navigation);
+            if(responseData.success){
+                setHabits(responseData.data);
+            }else{
+                Alert.alert("Error al cargar sus habitos");
             }
+            setLoading(false);
         };
-
         fetchData();
+    },[]);
 
-    }, []);
-
-
-    useEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => null, // Eliminar la flecha de retroceso
-        });
-    }, [navigation]);
 
     if (loading) {
         return (
