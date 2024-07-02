@@ -20,7 +20,7 @@ const EjercicioScreen = () => {
           <Text style={styles.buttonText}>Inicia Sesion</Text>
         </TouchableOpacity>
       </TouchableOpacity>
-      {/* Repite esto para las otras dos opciones */}
+      
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.backButtonText}>Volver</Text>
       </TouchableOpacity>

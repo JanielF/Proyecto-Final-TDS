@@ -1,7 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD:client/src/Screens/homehabit.js
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { fetchHabits } from '../Apis/habits';
+=======
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+>>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
 
 // Importar los módulos necesarios
 
@@ -13,6 +17,14 @@ const HomeHabitat = () => {
 
     // Obtener los hábitos al cargar el componente
     useEffect(() => {
+<<<<<<< HEAD:client/src/Screens/homehabit.js
+        const fetchData = async () =>{
+            const responseData = await fetchHabits(navigation);
+            if(responseData.success){
+                setHabits(responseData.data);
+            }else{
+                Alert.alert("Error al cargar sus habitos");
+=======
         const fetchData = async () => {
             try {
                 const token = await AsyncStorage.getItem('token'); // Obtener el token del almacenamiento
@@ -39,10 +51,15 @@ const HomeHabitat = () => {
                 Alert.alert('Error', error.message); // Mostrar una alerta si hay un error en la solicitud
             } finally {
                 setLoading(false); // Finalizar la carga
+>>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
             }
+            setLoading(false);
         };
-
         fetchData();
+<<<<<<< HEAD:client/src/Screens/homehabit.js
+    },[]);
+
+=======
     }, []);
 
     // Configurar opciones de navegación al cargar el componente
@@ -51,6 +68,7 @@ const HomeHabitat = () => {
             headerLeft: () => null, // Eliminar la flecha de retroceso
         });
     }, [navigation]);
+>>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
 
     // Mostrar mensaje de carga
     if (loading) {
