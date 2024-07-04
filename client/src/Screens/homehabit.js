@@ -1,11 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD:client/src/Screens/homehabit.js
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fetchHabits } from '../Apis/habits';
-=======
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
->>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
 
 // Importar los módulos necesarios
 
@@ -15,60 +11,23 @@ const HomeHabitat = () => {
     const [loading, setLoading] = useState(true); // Estado para controlar el estado de carga
     const navigation = useNavigation(); // Obtener la navegación
 
-    // Obtener los hábitos al cargar el componente
-    useEffect(() => {
-<<<<<<< HEAD:client/src/Screens/homehabit.js
-        const fetchData = async () =>{
+    useEffect(() =>{
+        const fetchData = async() =>{
             const responseData = await fetchHabits(navigation);
             if(responseData.success){
                 setHabits(responseData.data);
-            }else{
-                Alert.alert("Error al cargar sus habitos");
-=======
-        const fetchData = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token'); // Obtener el token del almacenamiento
-                if (!token) {
-                    Alert.alert('Token no encontrado'); // Mostrar una alerta si no se encuentra el token
-                    return;
-                }
-                const response = await fetch(`http://10.0.0.15:3000/api/habits/byuser`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // Agregar el token a los encabezados de la solicitud
-                    },
-                });
-
-                const responseData = await response.json(); // Obtener los datos de respuesta
-                if (responseData.success) {
-                    setHabits(responseData.data); // Actualizar los hábitos con los datos recibidos
-                } else {
-                    Alert.alert('Error', responseData.message); // Mostrar una alerta si hay un error en la respuesta
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Alert.alert('Error', error.message); // Mostrar una alerta si hay un error en la solicitud
-            } finally {
-                setLoading(false); // Finalizar la carga
->>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
+                setLoading(false);
             }
-            setLoading(false);
+            else{
+                Alert.alert("Error al cargar sus habitos");
+                setLoading(false);
+            }
         };
-        fetchData();
-<<<<<<< HEAD:client/src/Screens/homehabit.js
-    },[]);
-
-=======
-    }, []);
-
-    // Configurar opciones de navegación al cargar el componente
-    useEffect(() => {
         navigation.setOptions({
-            headerLeft: () => null, // Eliminar la flecha de retroceso
-        });
-    }, [navigation]);
->>>>>>> f6c61990e16ea687a7bd43d111781dde6defdebe:client/components/homehabit.js
+            headerLeft: () => null
+        })
+        fetchData();
+    }, [navigation])
 
     // Mostrar mensaje de carga
     if (loading) {
