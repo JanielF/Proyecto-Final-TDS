@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 const EjercicioScreen = () => {
   const navigation = useNavigation();
   return (
@@ -13,7 +12,7 @@ const EjercicioScreen = () => {
         </Text>
       </View>
       <TouchableOpacity style={styles.card}>
-        <Image source={require('../assets/dumbell.png')} style={styles.icon} />
+        <Image source={require('../../assets/dumbell.png')} style={styles.icon} />
         <Text style={styles.cardTitle}>Rutinas</Text>
         <Text style={styles.cardDescription}>Pon el ejercicio que quieras seguir.</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Login')}>

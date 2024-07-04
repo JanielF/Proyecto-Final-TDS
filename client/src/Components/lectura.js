@@ -18,7 +18,7 @@ const LecturaScreen = () => {
         </Text>
       </View>
       <TouchableOpacity style={styles.card}>
-        <Image source={require('../assets/libro.png')} style={styles.icon} />
+        <Image source={require('../../assets/libro.png')} style={styles.icon} />
         <Text style={styles.cardTitle}>Beneficios de la Lectura</Text>
         <Text style={styles.cardDescription}>Amplía tu perspectiva, mejora la concentración y reduce el estrés.</Text>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>

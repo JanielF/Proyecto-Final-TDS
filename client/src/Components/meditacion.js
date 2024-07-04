@@ -18,7 +18,7 @@ const MeditacionScreen = () => {
         </Text>
       </View>
       <TouchableOpacity style={styles.card}>
-        <Image source={require('../assets/meditacion.png')} style={styles.icon} />
+        <Image source={require('../../assets/meditacion.png')} style={styles.icon} />
         <Text style={styles.cardTitle}>Beneficios de la Meditación</Text>
         <Text style={styles.cardDescription}>Reduce el estrés, mejora la concentración y promueve la calma interior.</Text>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
