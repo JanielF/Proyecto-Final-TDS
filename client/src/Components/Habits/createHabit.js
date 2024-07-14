@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import { createHabit } from '../../Apis/habits';
 
 const CreateHabit = () => {
     const [name, setName] = useState('');
@@ -12,51 +13,22 @@ const CreateHabit = () => {
     const navigation = useNavigation();
 
     const handleCreateHabit = async () => {
-        if (!name || !description || !frequency) {
-            Alert.alert('Error', 'Por favor completa todos los campos');
-            return;
-        }
-
         setLoading(true);
         try {
-            const token = await AsyncStorage.getItem('token');
-            if (!token) {
-                Alert.alert('Token no encontrado');
-                return;
-            }
-
-            const userId = ''; // Aquí deberías obtener el userId del contexto de usuario o almacenamiento
-
-            const requestData = {
-                name,
-                description,
-                frequency,
-                userId
-            };
-
-            const response = await fetch(`http://10.0.0.15:3000/api/habits`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            const responseData = await response.json();
-            if (responseData.success) {
-                Alert.alert('Éxito', 'Hábito creado correctamente');
-                navigation.navigate('HomeHabitat'); // Navegar a la pantalla de HomeHabitat después de crear el hábito
-            } else {
-                Alert.alert('Error', responseData.message);
-            }
+            const response = await createHabit(name, description, frequency, navigation);
+            if(response && response.success){
+                Alert.alert('Hábito creado exitosamente');
+                navigation.navigate('HomeHabit');
+            } else{
+                Alert.alert('Ha ocurrido un error intente mas tarde, ', response.message);
+            } 
+            console.log("Este es el response de creacion", response);
         } catch (error) {
-            console.error('Error:', error);
-            Alert.alert('Error', error.message);
-        } finally {
+            console.log(error);
+        }finally{
             setLoading(false);
         }
-    };
+    }
 
     return (
         <View style={styles.container}>
@@ -94,9 +66,9 @@ const CreateHabit = () => {
                     value={frequency}
                     onValueChange={(value) => setFrequency(value)}
                     items={[
-                        { label: 'Diario', value: 'Diario' },
-                        { label: 'Semanal', value: 'Semanal' },
-                        { label: 'Mensual', value: 'Mensual' },
+                        { label: 'Diario', value: 'daily' },
+                        { label: 'Semanal', value: 'weekly' },
+                        { label: 'Mensual', value: 'monthly' },
                     ]}
                 />
             </View>
@@ -133,8 +105,8 @@ const pickerSelectStyles = StyleSheet.create({
         borderColor: '#cccccc',
         borderRadius: 8,
         color: '#333333',
-        paddingRight: 30, // to ensure the text is never behind the icon
-    },
+        paddingRight: 30,
+     },
 });
 
 const styles = StyleSheet.create({
@@ -168,7 +140,7 @@ const styles = StyleSheet.create({
     },
     descriptionInput: {
         height: 100,
-        textAlignVertical: 'top', // Para alinear el texto en la parte superior en el campo de descripción multilinea
+        textAlignVertical: 'top', 
     },
     createButton: {
         backgroundColor: '#007bff',

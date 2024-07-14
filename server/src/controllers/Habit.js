@@ -42,20 +42,24 @@ const GetHabit = async(req, res) => {
 const CreateHabit = async(req, res) =>{
     const {name, description, frequency, userId } = req.body
     try {
+
+        const userId = req.user.id
+
         const newHabit = new HabitModel({
             name,
             description,
             frequency,
-            userId
+            userId: new mongoose.Types.ObjectId(userId)
         });
-        res.status(201).json({
+        await newHabit.save();
+        return res.status(201).json({
             success:true,
             message:'Habit creada',
             data: newHabit,
             userToken: req.user
         })
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success:false,
             message:error.message,
             data:"Error encontrado"
@@ -107,7 +111,7 @@ const DeleteHabit = async(req, res) => {
 
 const getHabitById = async (req, res) => {
     try {
-        const {userId} = req.user.id; 
+        const userId = await req.user.id; 
         const habits = await HabitModel.find({ userId: userId });
         res.status(200).json({
             success: true,
@@ -123,24 +127,11 @@ const getHabitById = async (req, res) => {
     }
 }
 
-const getHabitByUser = async (req, res) => {
-    try {
-        const habits = await HabitModel.find({ username: req.user.username });
-
-        res.status(200).json({
-            success: true,
-            message: 'Hábitos obtenidos',
-            data: habits
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-            data: "Error encontrado"
-        });
-    }
+const completeHabit = async (req,res) => {
+    
 }
 
-module.exports = {getAllHabit, GetHabit, CreateHabit, EditHabit, DeleteHabit,getHabitByUser, getHabitById}
+
+module.exports = {getAllHabit, GetHabit, CreateHabit, EditHabit, DeleteHabit, getHabitById}
 
 
