@@ -21,6 +21,30 @@ const getAllusers = async (req, res) => {
     }
 }
 
+const GetUser = async (req,res) => {
+    try {
+        const user = await UserModel.findById(req.params.id);
+        if(!user){
+            throw new Error("Usuario no encontrado");
+        }
+        const userData = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            name: user.name,
+            lastname: user.lastname,
+            age: user.age
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Detalles del usuario',
+            data: userData
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message, data: null });
+    }
+}
+
 const EditUser = async (req, res) => {
     try {
         if(req.body.password){
@@ -67,4 +91,4 @@ const DeleteUser = async(req, res) => {
     }   
 }
 
-module.exports = {getAllusers, EditUser, DeleteUser};
+module.exports = {getAllusers, EditUser, DeleteUser, GetUser};

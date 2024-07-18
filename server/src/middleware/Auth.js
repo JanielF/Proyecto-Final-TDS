@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {UserModel} =  require('../models/User');
 
+const JWTSECRET = process.env.JWT_SECRET;
 const Register = async (req, res) => {
     const {username, password, email, name, lastname, age} = req.body;
     try {
@@ -78,11 +79,12 @@ const authMiddleware = async (req, res, next) => {
             data: null
         });
     }
+    console.log('Token recibido:', token);
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;  // Almacena la información del usuario en req.user
-        next();  // Pasa al siguiente middleware o ruta
+        const decoded = jwt.verify(token, JWTSECRET);
+        req.user = decoded;  
+        next(); 
     } catch (error) {
         let errorMessage = 'Token invalido';
         if (error.name === 'TokenExpiredError') {
