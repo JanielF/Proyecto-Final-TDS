@@ -9,6 +9,7 @@ const ProfileScreen = () => {
   const [user, setUser] = useState({});
   const [isEditable, setIsEditable] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -47,6 +48,33 @@ const ProfileScreen = () => {
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Error al actualizar el usuario');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.id;
+
+      const response = await fetch(`http://${ipv4}/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await AsyncStorage.removeItem('token');
+        Alert.alert('Éxito', 'Usuario eliminado correctamente');
+        navigation.navigate('Login'); // Adjust the navigation route as needed
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Error al eliminar el usuario');
     }
   };
 
@@ -132,6 +160,43 @@ const ProfileScreen = () => {
           </View>
         </View>
       </Modal>
+
+      <View style={styles.dangerZone}>
+        <Text style={styles.dangerZoneTitle}>Danger Zone</Text>
+        <TouchableOpacity
+          style={styles.dangerButton}
+          onPress={() => setShowDeleteModal(true)}
+        >
+          <Text style={styles.dangerButtonText}>Eliminar Cuenta</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        transparent={true}
+        visible={showDeleteModal}
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modal}>
+            <Text style={styles.modalText}>¿Estás seguro de que quieres eliminar tu cuenta?</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: 'red' }]}
+              onPress={() => {
+                handleDelete();
+                setShowDeleteModal(false);
+              }}
+            >
+              <Text style={styles.modalButtonText}>Sí</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: 'grey' }]}
+              onPress={() => setShowDeleteModal(false)}
+            >
+              <Text style={styles.modalButtonText}>No</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -162,6 +227,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  dangerZone: {
+    marginTop: 32,
+    padding: 16,
+    backgroundColor: '#fff3f3',
+    borderColor: '#ffcccc',
+    borderWidth: 1,
+    borderRadius: 4,
+  },
+  dangerZoneTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#d9534f',
+    marginBottom: 16,
+  },
+  dangerButton: {
+    backgroundColor: '#d9534f',
+    padding: 10,
+    borderRadius: 4,
+  },
+  dangerButtonText: {
     color: '#fff',
     textAlign: 'center',
     fontSize: 16,

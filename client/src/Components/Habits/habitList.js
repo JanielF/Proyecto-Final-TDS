@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import importData from './importData';
 import { FontAwesome } from '@expo/vector-icons';
+import HabitDetailsModal from './DetailsHabit'; // Importa el modal
 
 const HabitList = ({ habits, navigation }) => {
   const habitSummary = {
@@ -9,17 +10,27 @@ const HabitList = ({ habits, navigation }) => {
   };
 
   const [importantInfo, setImportantInfo] = useState(null);
-
+  const [selectedHabit, setSelectedHabit] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const selectRandomInfo = () => {
     const randomIndex = Math.floor(Math.random() * importData.length);
     setImportantInfo(importData[randomIndex]);
   };
 
-  
-  useState(() => {
+  useEffect(() => {
     selectRandomInfo();
   }, []);
+
+  const openHabitDetails = (habit) => {
+    setSelectedHabit(habit);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedHabit(null);
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -35,14 +46,12 @@ const HabitList = ({ habits, navigation }) => {
         <Text style={styles.summaryItem}>Total de hábitos: {habitSummary.total}</Text>
       </View>
 
-
       {importantInfo && (
         <View style={styles.importantInfo}>
           <Text style={styles.importantInfoTitle}>{importantInfo.title}</Text>
           <Text style={styles.importantInfoText}>{importantInfo.text}</Text>
         </View>
       )}
-
 
       <TouchableOpacity
         style={styles.createButton}
@@ -57,7 +66,8 @@ const HabitList = ({ habits, navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.habitItem}
-              onPress={() => navigation.navigate('HabitDetails', { habit: item })} >
+              onPress={() => openHabitDetails(item)} // Abre el modal con los detalles del hábito
+            >
               <Text style={styles.habitText}>{item.name}</Text>
               <FontAwesome name='check' size={24} color='#007bff'/>
             </TouchableOpacity>
@@ -69,12 +79,18 @@ const HabitList = ({ habits, navigation }) => {
           }
         />
       ) : (
-        // Mostrar mensaje cuando no hay hábitos registrados
         <View style={styles.noHabitsContainer}>
           <Text style={styles.noHabitsText}>No tienes hábitos registrados</Text>
           <Text style={styles.createHabitText}>Crea uno nuevo para empezar</Text>
         </View>
       )}
+
+      <HabitDetailsModal
+        visible={modalVisible}
+        onDismiss={closeModal}
+        habit={selectedHabit}
+        navigation={navigation} // Asegúrate de pasar `navigation` si se necesita en el modal
+      />
     </View>
   );
 };
@@ -137,10 +153,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 24,
   },
   createButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -148,38 +164,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
-    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   habitText: {
-    fontSize: 18,
-    fontWeight: '500',
+    fontSize: 16,
     color: '#333',
   },
   listHeader: {
-    backgroundColor: '#007bff',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   listHeaderText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#333',
   },
   noHabitsContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 24,
   },
   noHabitsText: {
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   createHabitText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: '#007bff',
   },
 });
 

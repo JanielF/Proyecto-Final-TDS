@@ -12,6 +12,8 @@ import CreateHabit from './Habits/createHabit';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import SettingsScreen from '../Screens/settings';
 import ProfileScreen from './User/profile';
+import HabitDetailsModal from './Habits/DetailsHabit';
+import ChangePasswordScreen from './User/changePassword';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +43,8 @@ export default function Navigation() {
         />
          <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configuración' }} />
           <Stack.Screen name='Profile' component={ProfileScreen} />
+          <Stack.Screen name="HabitDetails" component={HabitDetailsModal} />
+          <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,12 +1,48 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 const ChangePasswordScreen = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleChangePassword = () => {
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'Las nuevas contraseñas no coinciden');
+      return;
+    }
+    // Aquí puedes agregar la lógica para cambiar la contraseña
+    Alert.alert('Éxito', 'Contraseña cambiada exitosamente');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Cambiar Contraseña</Text>
       <Text style={styles.subtitle}>Aquí puedes cambiar tu contraseña actual por una nueva.</Text>
-      {/* Agregar aquí el formulario para cambiar la contraseña */}
+      <TextInput
+        style={styles.input}
+        placeholder="Contraseña Actual"
+        secureTextEntry
+        value={currentPassword}
+        onChangeText={setCurrentPassword}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Nueva Contraseña"
+        secureTextEntry
+        value={newPassword}
+        onChangeText={setNewPassword}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirmar Nueva Contraseña"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
+        <Text style={styles.buttonText}>Cambiar Contraseña</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -27,6 +63,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6b7280',
     marginBottom: 24,
+  },
+  input: {
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
