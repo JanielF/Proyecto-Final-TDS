@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { LoginFunc } from '../Apis/authapis';
 
 const ipv4 = process.env.Ipv4 || '192.168.1.108:3000';
 
@@ -9,34 +9,12 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    console.log('HandleLogin called');
-    try {
-      const response = await fetch(`http://192.168.1.108:3000/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
-      });
-
-      console.log('Response received');
-
-      const responseJson = await response.json();
-      console.log('Response JSON:', responseJson);
-
-      if (responseJson.success) {
-        await AsyncStorage.setItem('token', responseJson.data);
-        Alert.alert('Login Success');
-        navigation.navigate('HomeHabit');
-      } else {
-        Alert.alert(responseJson.message);
-      }
-    } catch (error) {
-      console.log('Error:', error);
-      Alert.alert(error.message);
+    const response = await LoginFunc(username, password);
+    if(response.success){
+      Alert.alert(response.message)
+      navigation.navigate("HomeHabit");
+    }else{
+      Alert.alert('Contraseña incorrecta o usuario incorrecto')
     }
   };
 

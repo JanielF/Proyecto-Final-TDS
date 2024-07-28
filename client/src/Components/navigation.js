@@ -14,6 +14,7 @@ import SettingsScreen from '../Screens/settings';
 import ProfileScreen from './User/profile';
 import HabitDetailsModal from './Habits/DetailsHabit';
 import ChangePasswordScreen from './User/changePassword';
+import EditHabitModal from './Habits/Edit&Delete';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,7 @@ export default function Navigation() {
           <Stack.Screen name='Profile' component={ProfileScreen} />
           <Stack.Screen name="HabitDetails" component={HabitDetailsModal} />
           <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} />
+          <Stack.Screen name='EditHabit' component={EditHabitModal} />
       </Stack.Navigator>
     </NavigationContainer>
   );

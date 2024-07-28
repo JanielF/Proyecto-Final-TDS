@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 import { useNavigation } from '@react-navigation/native';
-import { DetailsUser } from '../../Apis/user';
+import { DeleteUser, DetailsUser, UpdateUser } from '../../Apis/user';
 
 const ProfileScreen = () => {
   const [user, setUser] = useState({});
@@ -24,59 +24,20 @@ const ProfileScreen = () => {
   };
 
   const handleSave = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.id;
-
-      const response = await fetch(`http://${ipv4}/api/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(user)
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setIsEditable(false);
-        Alert.alert('Éxito', 'Usuario actualizado correctamente');
-      } else {
-        Alert.alert('Error', data.message);
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Error al actualizar el usuario');
+    const response = await UpdateUser(user.username, user.email, user.name, user.lastname, user.age);
+    if(response){
+      Alert.alert('Éxito', 'Usuario actualizado correctamente');
+      setIsEditable(false);
     }
   };
 
   const handleDelete = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.id;
-
-      const response = await fetch(`http://${ipv4}/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await AsyncStorage.removeItem('token');
-        Alert.alert('Éxito', 'Usuario eliminado correctamente');
-        navigation.navigate('Login'); // Adjust the navigation route as needed
-      } else {
-        Alert.alert('Error', data.message);
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Error al eliminar el usuario');
+    const response  = await DeleteUser(user._id);
+    if(response){
+      Alert.alert('Éxito', 'Usuario eliminado correctamente');
+      navigation.navigate('Login');
     }
-  };
+  }
 
   return (
     <View style={styles.container}>

@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { ChangePassword } from '../../Apis/authapis';
 
 const ChangePasswordScreen = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       Alert.alert('Error', 'Las nuevas contraseñas no coinciden');
       return;
     }
-    // Aquí puedes agregar la lógica para cambiar la contraseña
-    Alert.alert('Éxito', 'Contraseña cambiada exitosamente');
+    try {
+      const response = await ChangePassword(confirmPassword)
+      if(response){
+        Alert.alert('Éxito', 'Contraseña actualizada correctamente');
+        setConfirmPassword('');
+        setCurrentPassword('');
+        setNewPassword('');
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   return (

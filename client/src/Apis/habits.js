@@ -7,8 +7,8 @@ export const fetchHabits = async (navigation) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
-            return Alert.alert('Could not find');
-            navigation.navigate('Login')
+            Alert.alert('Could not find');
+            return navigation.navigate('Login')
         }  
         const response = await fetch(`http://${ipv4}/api/habits/byuser`, {
             method: 'GET',
@@ -17,7 +17,7 @@ export const fetchHabits = async (navigation) => {
                 'Authorization': `Bearer ${token}`
             },
         });
-        const responseJSON = response.json();
+        const responseJSON = await response.json();
         return responseJSON;
     } catch (error) {
         return Alert.error("Error interno");
@@ -40,9 +40,8 @@ export const createHabit = async (name,description, frequency, navigation) =>{
             name,
             description,
             frequency: frequency.toLowerCase(),
-            userId
         }
-        const response = await fetch(`http://${ipv4}/api/habits/create`, {
+        const response = await fetch(`http://${ipv4}/api/habits/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,42 +51,44 @@ export const createHabit = async (name,description, frequency, navigation) =>{
         });
 
         const responseJSON = await response.json();
+        console.log(responseJSON);
         return responseJSON;
     } catch (error) {
         Alert.alert('Error interno');
         console.log(error);
     }
 }
+//Detalles de la aplicacion
 export const DetailsHabit = async (id) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if(!token){
             return Alert.alert('Could not find');
         }
-        const response = await fetch(`http://${ipv4}/api/habits/habit/${id}`, {
+        const response = await fetch(`http://${ipv4}/api/habits/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         });
-        const responseJSON = response.json();
+        const responseJSON = await response.json();
+        console.log(responseJSON);
         return responseJSON;
     } catch (error) {
         console.log(error);
         return Alert.error("Error interno");
     }
 }
-export const deleteHabit = async (id, navigation) => {
+//Eliminar
+export const deleteHabit = async (id) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
-            Alert.alert('No se encontró token');
-            navigation.navigate('Login');
             return;
         }
 
-        const response = await fetch(`http://${ipv4}/api/habits/delete/${id}`, {
+        const response = await fetch(`http://${ipv4}/api/habits/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,8 +109,8 @@ export const deleteHabit = async (id, navigation) => {
         return false;
     }
 };
-
-export const updateHabit = async (id, updatedHabit, navigation) => {
+//Update habito
+export const updateHabit = async (idhabit, name, description, frequency) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -117,22 +118,29 @@ export const updateHabit = async (id, updatedHabit, navigation) => {
             navigation.navigate('Login');
             return false;
         }
-
-        const response = await fetch(`http://${ipv4}/api/habits/edit/${id}`, {
+        const decoded = jwtDecode(token);
+        const userId = decoded.id;
+        console.log(userId)
+        const response = await fetch(`http://${ipv4}/api/habits/${idhabit}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(updatedHabit),
+            body: JSON.stringify({ 
+                name, 
+                description, 
+                frequency, 
+                userId }),
         });
-        if (response.success) {
-            const responseData = await response.json();
+        const responseData = await response.json();
+        console.log(responseData);
+        if (responseData.succes) {
             Alert.alert('Éxito', 'Hábito actualizado exitosamente');
             return true;
         } else {
-            const errorData = await response.json();
-            Alert.alert('Error', `No se pudo actualizar el hábito: ${errorData.message}`);
+            console.error(responseData.message);
+            Alert.alert('Error', `No se pudo actualizar el hábito: ${responseData.message}`);
             return false;
         }
     } catch (error) {
@@ -141,4 +149,30 @@ export const updateHabit = async (id, updatedHabit, navigation) => {
         return false;
     }
 };
+
+export const completedHabit = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            Alert.alert('Error', 'No se encontró token de autenticación');
+            return false;
+        }
+        const response = await fetch(`http://${ipv4}/api/habits/completed/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        if(!response.success){
+            response.message = 'No se pudo marcar completado el habito';
+            return response;
+        }
+        const data = response.json();
+        return data;
+    } catch (error) {
+        console.error(error.message);
+        return false;
+    }
+}
 

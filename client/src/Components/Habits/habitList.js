@@ -1,37 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import importData from './importData';
 import { FontAwesome } from '@expo/vector-icons';
-import HabitDetailsModal from './DetailsHabit'; // Importa el modal
+import HabitDetailsModal from './DetailsHabit';
+import EditHabitModal from './Edit&Delete';
+import { completedHabit } from '../../Apis/habits';
+import importData from './importData';
 
-const HabitList = ({ habits, navigation }) => {
+const HabitList = ({ habits, setHabits, navigation }) => {
   const habitSummary = {
     total: habits.length,
   };
 
   const [importantInfo, setImportantInfo] = useState(null);
   const [selectedHabit, setSelectedHabit] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [completeHabit, setCompletedHabit] = useState([]);
   const selectRandomInfo = () => {
     const randomIndex = Math.floor(Math.random() * importData.length);
     setImportantInfo(importData[randomIndex]);
   };
 
+  const handleGetCompleted = async(id) => {
+    try {
+      await completedHabit(id);
+    } catch (error) {
+      console.error(error);or(error);
+    }
+  }
   useEffect(() => {
     selectRandomInfo();
   }, []);
 
   const openHabitDetails = (habit) => {
     setSelectedHabit(habit);
-    setModalVisible(true);
+    setDetailsModalVisible(true);
   };
 
   const closeModal = () => {
     setSelectedHabit(null);
-    setModalVisible(false);
+    setDetailsModalVisible(false);
+    setEditModalVisible(false);
   };
 
+  const openEditModal = (habit) => {
+    setSelectedHabit(habit);
+    setEditModalVisible(true);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -55,7 +70,8 @@ const HabitList = ({ habits, navigation }) => {
 
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => navigation.navigate('CreateHabit')}>
+        onPress={() => navigation.navigate('CreateHabit')}
+      >
         <Text style={styles.createButtonText}>Crear Nuevo Hábito</Text>
       </TouchableOpacity>
 
@@ -66,10 +82,11 @@ const HabitList = ({ habits, navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.habitItem}
-              onPress={() => openHabitDetails(item)} // Abre el modal con los detalles del hábito
+              onPress={() => openHabitDetails(item)}
             >
               <Text style={styles.habitText}>{item.name}</Text>
-              <FontAwesome name='check' size={24} color='#007bff'/>
+              <FontAwesome name='plus' size={16} color='#007bff' onPress={() => handleGetCompleted(item._id)} />
+              <FontAwesome name='pencil' size={16} color='#007bff' onPress={() => openEditModal(item)} />
             </TouchableOpacity>
           )}
           ListHeaderComponent={
@@ -86,10 +103,14 @@ const HabitList = ({ habits, navigation }) => {
       )}
 
       <HabitDetailsModal
-        visible={modalVisible}
+        visible={detailsModalVisible}
+        onDismiss={closeModal}
+        habitId={selectedHabit?._id}
+      />
+      <EditHabitModal
+        visible={editModalVisible}
         onDismiss={closeModal}
         habit={selectedHabit}
-        navigation={navigation} // Asegúrate de pasar `navigation` si se necesita en el modal
       />
     </View>
   );

@@ -52,22 +52,26 @@ const resetPassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
     const {newPassword} = req.body;
-    const {token} = req.params;
+    if (!newPassword || newPassword.trim() === '') {
+        return res.status(400).json({
+            success: false,
+            message: 'La contraseña nueva es requerida'
+        });
+    }
     try {
-        const decaded = jwt.verify(token, EMAIL_SECRET);
+        const userId = req.user.id;
         const passwordHaashed = await bcrypt.hash(newPassword, 10);
-        await UserModel.findByIdAndUpdate(decaded.id, {password: passwordHaashed});
+        await UserModel.findByIdAndUpdate(userId, {password: passwordHaashed});
         res.status(200).json({
-            success:true,
+            success: true,
             message: 'Contraseña cambiada'
-        })
+        });
     } catch (error) {
         res.status(500).json({
-            success:false,
-            message:error.message,
-            data:'Error obtenido'
-        })
+            success: false,
+            message: error.message,
+            data: 'Error obtenido'
+        });
     }
 }
-
 module.exports = {resetPassword, changePassword}

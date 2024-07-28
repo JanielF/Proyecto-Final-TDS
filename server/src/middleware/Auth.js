@@ -46,6 +46,7 @@ const Register = async (req, res) => {
 const Login = async (req, res) => {
     const { username, password} = req.body;
     try {
+        console.log("hola login")
         const user = await UserModel.findOne({ username: username});
         if(!user) {
             throw new Error('Usuario no encontrado');

@@ -16,7 +16,7 @@ const CreateHabit = () => {
         setLoading(true);
         try {
             const response = await createHabit(name, description, frequency, navigation);
-            if(response && response.success){
+            if(response.succes){
                 Alert.alert('Hábito creado exitosamente');
                 navigation.navigate('HomeHabit');
             } else{

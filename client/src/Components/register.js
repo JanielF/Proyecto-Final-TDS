@@ -12,7 +12,7 @@ const RegisterScreen=({ navigation }) => {
   const handleRegister = async () => {
     console.log("Event Called");
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch('http://192.168.1.108:3000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,10 +82,7 @@ const RegisterScreen=({ navigation }) => {
         keyboardType="numeric"
       />
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Registrarse</Text>
+        <Text style={styles.buttonText}>Registrate</Text>
       </TouchableOpacity>
     </View>
   );
