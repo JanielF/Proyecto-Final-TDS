@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import HabitDetailsModal from './DetailsHabit';
 import EditHabitModal from './Edit&Delete';
 import { completedHabit } from '../../Apis/habits';
 import importData from './importData';
+import CustomAlert from '../customAlert';
 
-const HabitList = ({ habits, setHabits, navigation }) => {
+const HabitList = ({ habits, navigation, onRefresh }) => {
   const habitSummary = {
     total: habits.length,
   };
@@ -15,7 +16,8 @@ const HabitList = ({ habits, setHabits, navigation }) => {
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [completeHabit, setCompletedHabit] = useState([]);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
   const selectRandomInfo = () => {
     const randomIndex = Math.floor(Math.random() * importData.length);
     setImportantInfo(importData[randomIndex]);
@@ -23,7 +25,14 @@ const HabitList = ({ habits, setHabits, navigation }) => {
 
   const handleGetCompleted = async(id) => {
     try {
-      await completedHabit(id);
+      const response = await completedHabit(id);
+      if(response.success){
+        setAlertVisible(true);
+        setalertMessage({title: 'Completado', 'message': "El Hábito fue completado"});        
+      }else{
+        setAlertVisible(true);
+        setalertMessage({title: 'Error', 'message': "El Hábito no se pudo completado"});    
+      }
     } catch (error) {
       console.error(error);or(error);
     }
@@ -31,16 +40,18 @@ const HabitList = ({ habits, setHabits, navigation }) => {
   useEffect(() => {
     selectRandomInfo();
   }, []);
-
   const openHabitDetails = (habit) => {
     setSelectedHabit(habit);
     setDetailsModalVisible(true);
   };
 
-  const closeModal = () => {
+  const closeModal = (refresh = false) => {
     setSelectedHabit(null);
     setDetailsModalVisible(false);
     setEditModalVisible(false);
+    if(refresh){
+      onRefresh();
+    }
   };
 
   const openEditModal = (habit) => {
@@ -54,11 +65,6 @@ const HabitList = ({ habits, setHabits, navigation }) => {
         <Text style={styles.subtitle}>
           Administra y monitorea tus hábitos diarios para mejorar tu estilo de vida.
         </Text>
-      </View>
-
-      <View style={styles.summary}>
-        <Text style={styles.summaryText}>Resumen de Hábitos</Text>
-        <Text style={styles.summaryItem}>Total de hábitos: {habitSummary.total}</Text>
       </View>
 
       {importantInfo && (
@@ -109,8 +115,14 @@ const HabitList = ({ habits, setHabits, navigation }) => {
       />
       <EditHabitModal
         visible={editModalVisible}
-        onDismiss={closeModal}
+        onDismiss={() => closeModal(true)}
         habit={selectedHabit}
+      />
+      <CustomAlert
+        visible={alertVisible}
+        title={alertMessage.title}
+        message={alertMessage.message}
+        onDismiss={() => setAlertVisible(false)}
       />
     </View>
   );
@@ -120,7 +132,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f7f9fc',
   },
   header: {
     marginBottom: 24,
@@ -128,32 +139,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#aaaaee',
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
-  },
-  summary: {
-    backgroundColor: '#e5e7eb',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 24,
-  },
-  summaryText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  summaryItem: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 4,
+    color: '#E6E6FA',
   },
   importantInfo: {
     backgroundColor: '#fff5e6',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 15,
     marginBottom: 24,
   },
   importantInfoTitle: {
@@ -168,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   createButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#6DACC8',
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 8,
@@ -182,7 +177,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   habitItem: {
-    backgroundColor: '#fff',
+    backgroundColor: '#e7f7fe',
     padding: 16,
     borderRadius: 8,
     flexDirection: 'row',
@@ -192,7 +187,8 @@ const styles = StyleSheet.create({
   },
   habitText: {
     fontSize: 16,
-    color: '#333',
+    color: '#1a1a1a',
+    fontStyle: 'bold'
   },
   listHeader: {
     marginBottom: 8,
@@ -200,7 +196,7 @@ const styles = StyleSheet.create({
   listHeaderText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#E6E6FA',
   },
   noHabitsContainer: {
     alignItems: 'center',

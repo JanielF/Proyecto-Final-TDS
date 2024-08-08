@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DeleteUser, DetailsUser, UpdateUser } from '../../Apis/user';
-
+import background from '../../../assets/background.jpg';
+import globalStyles from '../../../assets/css/globalCss';
 const ProfileScreen = () => {
   const [user, setUser] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -40,6 +39,7 @@ const ProfileScreen = () => {
   }
 
   return (
+    <ImageBackground source={background} style={globalStyles.background}>
     <View style={styles.container}>
       <Text style={styles.title}>Perfil</Text>
 
@@ -104,7 +104,7 @@ const ProfileScreen = () => {
           <View style={styles.modal}>
             <Text style={styles.modalText}>¿Quieres guardar los cambios?</Text>
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: 'green' }]}
+              style={[styles.modalButton, { backgroundColor: '#36c982' }]}
               onPress={() => {
                 handleSave();
                 setShowModal(false);
@@ -113,7 +113,7 @@ const ProfileScreen = () => {
               <Text style={styles.modalButtonText}>Sí</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: 'red' }]}
+              style={[styles.modalButton, { backgroundColor: '#75a3a3' }]}
               onPress={() => setShowModal(false)}
             >
               <Text style={styles.modalButtonText}>No</Text>
@@ -141,7 +141,7 @@ const ProfileScreen = () => {
           <View style={styles.modal}>
             <Text style={styles.modalText}>¿Estás seguro de que quieres eliminar tu cuenta?</Text>
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: 'red' }]}
+              style={[styles.modalButton, { backgroundColor: '#ff4d4d' }]}
               onPress={() => {
                 handleDelete();
                 setShowDeleteModal(false);
@@ -150,7 +150,7 @@ const ProfileScreen = () => {
               <Text style={styles.modalButtonText}>Sí</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: 'grey' }]}
+              style={[styles.modalButton, { backgroundColor: '#75a3a3' }]}
               onPress={() => setShowDeleteModal(false)}
             >
               <Text style={styles.modalButtonText}>No</Text>
@@ -159,30 +159,34 @@ const ProfileScreen = () => {
         </View>
       </Modal>
     </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f7f9fc',
+  container : {
+    flex:1, 
+    width: '80%',
+    alignSelf: 'center'
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 24,
+    color: '#1a1a1a',
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 23,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
+    backgroundColor: '#ffffff',
     padding: 10,
     marginBottom: 16,
     borderRadius: 4,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#6DACC8',
     padding: 10,
     borderRadius: 4,
     marginBottom: 16,
@@ -191,17 +195,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontSize: 16,
+    width: '200',
   },
   dangerZone: {
     marginTop: 32,
     padding: 16,
     backgroundColor: '#fff3f3',
+    height: '100',
     borderColor: '#ffcccc',
     borderWidth: 1,
     borderRadius: 4,
   },
   dangerZoneTitle: {
     fontSize: 18,
+    width: '200',
     fontWeight: 'bold',
     color: '#d9534f',
     marginBottom: 16,
@@ -223,7 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: '#C1D7E1',
     padding: 20,
     borderRadius: 4,
     width: '80%',

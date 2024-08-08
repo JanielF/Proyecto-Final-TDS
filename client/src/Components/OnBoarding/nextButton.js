@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
+import globalStyles from "../../../assets/css/globalCss";
 const NextButton = ({ percentage }) => {
     const navigation = useNavigation();
     const size = 128;
@@ -45,7 +46,7 @@ const NextButton = ({ percentage }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={globalStyles.container}>
             <Svg width={size} height={size}>
                 <G rotation="-90" origin={center}>
                     <Circle
@@ -76,11 +77,6 @@ const NextButton = ({ percentage }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     button: {
         position: 'absolute',
         backgroundColor: '#f4338f',

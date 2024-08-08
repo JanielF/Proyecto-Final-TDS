@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const ipv4 = '192.168.1.108:3000';
 
@@ -44,10 +45,40 @@ export const ChangePassword = async (newPassword) => {
         const data = await response.json();
         console.log(data);
         if(data.success){
-            Alert.alert('Password changed successfully');
             return data;
         } 
+        else{
+            return data;
+        }
     } catch (error) {
-        
+        console.error(error.message);
     }
+}
+export const RegisterFunc = async (username, email,password,name,lastname, age) => {
+    try {
+        const response = await fetch('http://192.168.1.108:3000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password,
+            name: name,
+            lastname: lastname,
+            age: age,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+            return data;
+        } else {
+          Alert.alert('Error', data.message);
+        }
+      } catch (error) {
+        Alert.alert('Error', error.message);
+      }
 }

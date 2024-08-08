@@ -7,13 +7,13 @@ const ConfirmModal = ({ visible, onClose, onConfirm }) => {
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>Confirmación</Text>
+          <Text style={styles.title}>Cerrar Sesión</Text>
           <Text style={styles.message}>¿Deseas salir de la aplicación?</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, { backgroundColor: '#007bff' }]} onPress={onConfirm}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#36c982' }]} onPress={onConfirm}>
               <Text style={styles.buttonText}>Sí</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { backgroundColor: '#dc3545' }]} onPress={onClose}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#75a3a3' }]} onPress={onClose}>
               <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#C1D7E1',
     padding: 24,
     borderRadius: 8,
     width: '80%',

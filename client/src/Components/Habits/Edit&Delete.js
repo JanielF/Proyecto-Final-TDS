@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { deleteHabit, updateHabit } from '../../Apis/habits';
+import CustomAlert from '../customAlert';
+
 const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [frequency, setFrequency] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
+ 
 
   useEffect(() => {
     if (habit) {
@@ -20,31 +25,30 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
   const handleSave = async () => {
     setIsEditing(false);
     const response = await updateHabit(habit._id, name, description, frequency);
-    if(response){
-      Alert.alert('Hábito actualizado exitosamente');
-      onDismiss();
+    if (response.success) {
+      setAlertVisible(true);
+      setAlertMessage({title: 'Editado Correctamente', message: 'Hábito editado con éxito', screen: 'HabitHome'});
+    } else {
+      setAlertVisible(true);
+      setalertMessage({title: 'Error', message: 'No se pudo editar el hábito', screen: ''});
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Eliminar Hábito",
-      "¿Desea eliminar el hábito?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Eliminar",
-          onPress: () => {
-            deleteHabit(habit._id);
-            onDismiss();
-          },
-          style: "destructive"
-        }
-      ]
-    );
+  const handleDelete = async () => {
+    setAlertMessage("¿Desea eliminar el hábito?");
+    setAlertType('confirmation');
+    setAlertVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    const response = await deleteHabit(habit._id);
+    if (response.success) {
+      setAlertVisible(true);
+      setalertMessage({title:"Eliminado", message:"Hábito eliminado con éxito", screen: 'HabitHome'});
+    } else {
+      
+    }
+    setAlertVisible(true);
   };
 
   return (
@@ -75,6 +79,7 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
               label: 'Selecciona la frecuencia',
               value: null,
             }}
+            editable={isEditing}
             value={frequency}
             onValueChange={(value) => setFrequency(value)}
             items={[
@@ -95,6 +100,13 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
             </TouchableOpacity>
           </View>
         </View>
+        <CustomAlert
+          visible={alertVisible}
+          title={alertMessage.title}
+          message={alertMessage.message}
+          onDismiss={() => setAlertVisible(false)}
+          screen={alertMessage.screen}
+        />
       </View>
     </Modal>
   );
@@ -108,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#C1D7E1',
     padding: 24,
     borderRadius: 8,
     width: '80%',
@@ -134,6 +146,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     padding: 8,
+    backgroundColor: '#ffffff',
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -141,9 +154,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputDisabled: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
   },
   buttonContainer: {
+    marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
@@ -173,6 +187,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
       fontSize: 16,
@@ -182,10 +197,11 @@ const pickerSelectStyles = StyleSheet.create({
       borderColor: '#cccccc',
       borderRadius: 8,
       color: '#333333',
-      paddingRight: 30, // to ensure the text is never behind the icon
+      paddingRight: 30,
   },
   inputAndroid: {
       fontSize: 16,
+      width: 260,
       paddingHorizontal: 16,
       paddingVertical: 8,
       borderWidth: 1,
@@ -193,6 +209,7 @@ const pickerSelectStyles = StyleSheet.create({
       borderRadius: 8,
       color: '#333333',
       paddingRight: 30,
+      backgroundColor: '#ffffff',
    },
 });
 

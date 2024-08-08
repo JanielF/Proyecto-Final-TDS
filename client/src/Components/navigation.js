@@ -1,5 +1,3 @@
-// En tu archivo Navigation.js
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -22,12 +20,30 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} /> 
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Login" component={LoginScreen}
+          options={
+            { title: 'Login',
+              headerStyle: { backgroundColor: '#f2e6ff'}
+            }
+          }
+        />
+        <Stack.Screen name="Register" component={RegisterScreen}           
+          options={
+            { title: 'Registrar',
+              headerStyle: { backgroundColor: '#f2e6ff'}
+            } 
+          }
+        /> 
+        <Stack.Screen name="Home" component={Home} 
+        options={{
+          headerStyle: { backgroundColor: '#F8BBD0' },
+          headerTintColor: '#FFFFFF',
+        }} />
         <Stack.Screen name="HomeHabit" component={HomeHabitat}
           options={ ({navigation}) =>({
-            headerLeft: null, title: 'Mis Hábitos', 
+            headerTitle: 'Mis Hábitos',
+            headerLeft: null, 
+            headerStyle: { backgroundColor: '#f2e6ff'},
               centerTitle:true,
               headerRight: () => (
                 <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
@@ -39,13 +55,33 @@ export default function Navigation() {
         />
         <Stack.Screen name='CreateHabit' component={CreateHabit}  
           options={
-            { title: 'Crear Habitación', centerTitle:true } 
+            { title: 'Crear Hábito',
+              headerStyle: { backgroundColor: '#f2e6ff'}
+            } 
           } 
         />
-         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configuración' }} />
-          <Stack.Screen name='Profile' component={ProfileScreen} />
+         <Stack.Screen name="Settings" component={SettingsScreen}
+          options={
+            { title: 'Configuración',
+              headerStyle: { backgroundColor: '#f2e6ff'}
+            }
+          } 
+        />
+          <Stack.Screen name='Profile' component={ProfileScreen} 
+            options={
+              { title: 'Profile',
+                headerStyle: { backgroundColor: '#f2e6ff'}
+              } 
+            }
+          />
           <Stack.Screen name="HabitDetails" component={HabitDetailsModal} />
-          <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} />
+          <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} 
+            options={
+              { title: 'Cambiar Contraseña',
+                headerStyle: { backgroundColor: '#f2e6ff'}
+              } 
+            }
+          />
           <Stack.Screen name='EditHabit' component={EditHabitModal} />
       </Stack.Navigator>
     </NavigationContainer>

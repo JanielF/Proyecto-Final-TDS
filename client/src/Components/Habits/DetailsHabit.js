@@ -24,7 +24,7 @@ const HabitDetailsModal = ({ visible, onDismiss, habitId }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <TouchableOpacity style={styles.closeButton} onPress={onDismiss}>
-            <Text style={styles.closeButtonText}>×</Text>
+            <Text style={styles.closeButtonText}>x</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Detalles del Hábito</Text>
           {habit ? (
@@ -51,7 +51,7 @@ modalContainer: {
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
 },
 modalContent: {
-  backgroundColor: '#fff',
+  backgroundColor: '#C1D7E1',
   padding: 24,
   borderRadius: 8,
   width: '80%',
@@ -60,8 +60,8 @@ modalContent: {
 },
 closeButton: {
   position: 'absolute',
-  top: 16,
-  right: 16,
+  top: 0,
+  right: 5,
   padding: 8,
 },
 closeButtonText: {
@@ -77,8 +77,7 @@ title: {
 message: {
   fontSize: 18,
   marginBottom: 24,
-  color: '#333',
-  textAlign: 'center',
+  color: '#0d0d0d',
 },
 buttonContainer: {
   flexDirection: 'row',

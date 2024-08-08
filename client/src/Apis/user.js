@@ -47,8 +47,7 @@ export const UpdateUser = async (username, email, name, lastname, age) =>{
         })
         const data = await response.json();
         if(data.success){
-            Alert.alert('Éxito', 'Usuario actualizado exitosamente');
-            return true;
+            return data;
         }
         Alert.alert('Error', 'No se pudo actualizar el usuario');
     } catch (error) {
@@ -72,8 +71,7 @@ export const DeleteUser = async (id) => {
         })
         const data = await response.json();
         if(data.success){
-            Alert.alert('Éxito', 'Usuario eliminado exitosamente');
-            return true;
+            return data;
         }
         Alert.alert('Error', 'No se pudo eliminar el usuario');
     } catch (error) {

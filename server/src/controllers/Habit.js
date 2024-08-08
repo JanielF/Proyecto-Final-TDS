@@ -80,6 +80,7 @@ const completedHabit = async (req,res) =>{
         habit.lastCompleted = Date.now();
         await habit.save();
         res.status(200).json({
+            success:true,
             message: 'Habit completed successfully',
             data: habit
         });

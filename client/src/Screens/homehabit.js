@@ -1,14 +1,15 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fetchHabits } from '../Apis/habits';
 import HabitList from '../Components/Habits/habitList';
-
+import globalStyles from '../../assets/css/globalCss';
+import background from '../../assets/background.jpg';
 const HomeHabitat = () => {
     const [habits, setHabits] = useState([]); 
     const [loading, setLoading] = useState(true);
+    const [refresh, setRefresh] = useState(false);
     const navigation = useNavigation(); 
-
     const fetchData = async() =>{
         try{ 
             const responseData = await fetchHabits(navigation);
@@ -29,36 +30,24 @@ const HomeHabitat = () => {
     useFocusEffect(
         React.useCallback(() => {
             fetchData();
-        }, [navigation])
+            setRefresh(false);
+        }, [navigation, refresh])
     );
-    // Mostrar mensaje de carga
+    const handleRefresh = () =>{
+        setRefresh(true);
+    }
     if (loading) {
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>Cargando hábitos...</Text>
+            <View style={globalStyles.container}>
+                <Text style={globalStyles.title}>Cargando hábitos...</Text>
             </View>
         );
     }
     return (
-        <HabitList habits={habits} navigation={navigation} />
+        <ImageBackground source={background} style={globalStyles.background}>
+            <HabitList habits={habits} navigation={navigation} onRefresh={handleRefresh} />
+        </ImageBackground>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-});
-
-
-
 
 export default HomeHabitat;

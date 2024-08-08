@@ -164,11 +164,9 @@ export const completedHabit = async (id) => {
                 'Authorization': `Bearer ${token}`
             },
         });
-        if(!response.success){
-            response.message = 'No se pudo marcar completado el habito';
-            return response;
-        }
         const data = response.json();
+        console.log(data);
+        
         return data;
     } catch (error) {
         console.error(error.message);
