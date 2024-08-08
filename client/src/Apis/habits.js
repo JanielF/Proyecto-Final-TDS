@@ -1,0 +1,174 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+import {jwtDecode} from "jwt-decode";
+const ipv4 = process.env.Ipv4 || '192.168.1.108:3000';
+
+export const fetchHabits = async (navigation) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            Alert.alert('Could not find');
+            return navigation.navigate('Login')
+        }  
+        const response = await fetch(`http://${ipv4}/api/habits/byuser`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        const responseJSON = await response.json();
+        return responseJSON;
+    } catch (error) {
+        return Alert.error("Error interno");
+    }
+}
+
+
+export const createHabit = async (name,description, frequency, navigation) =>{
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            Alert.alert('Could not find');
+            navigation.navigate('habitHome');
+            return;
+        }   
+
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.id;
+        const requestData = {
+            name,
+            description,
+            frequency: frequency.toLowerCase(),
+        }
+        const response = await fetch(`http://${ipv4}/api/habits/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        const responseJSON = await response.json();
+        console.log(responseJSON);
+        return responseJSON;
+    } catch (error) {
+        Alert.alert('Error interno');
+        console.log(error);
+    }
+}
+//Detalles de la aplicacion
+export const DetailsHabit = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if(!token){
+            return Alert.alert('Could not find');
+        }
+        const response = await fetch(`http://${ipv4}/api/habits/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const responseJSON = await response.json();
+        console.log(responseJSON);
+        return responseJSON;
+    } catch (error) {
+        console.log(error);
+        return Alert.error("Error interno");
+    }
+}
+//Eliminar
+export const deleteHabit = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            return;
+        }
+
+        const response = await fetch(`http://${ipv4}/api/habits/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        console.log("Habito eliminado",response)
+        const responsedata = await response.json();
+        console.log("responsedata",responsedata)
+        if (responsedata.success) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+};
+//Update habito
+export const updateHabit = async (idhabit, name, description, frequency) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            Alert.alert('Error', 'No se encontró token de autenticación');
+            navigation.navigate('Login');
+            return false;
+        }
+        const decoded = jwtDecode(token);
+        const userId = decoded.id;
+        console.log(userId)
+        const response = await fetch(`http://${ipv4}/api/habits/${idhabit}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                name, 
+                description, 
+                frequency, 
+                userId }),
+        });
+        console.log(response);
+        const responseData = await response.json();
+        console.log("Habito editado",responseData);
+
+        if (responseData.succes){
+            return true;
+        } else {
+            console.error(responseData.message);
+            return false;
+        }
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+export const completedHabit = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            Alert.alert('Error', 'No se encontró token de autenticación');
+            return false;
+        }
+        const response = await fetch(`http://${ipv4}/api/habits/completed/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        const data = response.json();
+        console.log(data);
+        
+        return data;
+    } catch (error) {
+        console.error(error.message);
+        return false;
+    }
+}
+
