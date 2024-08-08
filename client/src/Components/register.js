@@ -1,48 +1,43 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-const RegisterScreen=({ navigation }) => {
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ImageBackground } from 'react-native';
+import { RegisterFunc } from '../Apis/authapis';
+import CustomAlert from './customAlert';
+import background from '../../assets/background.jpg';
+import globalStyles from '../../assets/css/globalCss';
+const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [age, setAge] = useState('');
-
+  const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisibleter] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({title: '', message: '', screen: ''});
   const handleRegister = async () => {
-    console.log("Event Called");
+    setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-          email: email,
-          password: password,
-          name: name,
-          lastname: lastname,
-          age: age,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        Alert.alert('Éxito', 'Registro exitoso');
-        navigation.navigate('Login');
+      const response = await RegisterFunc(username, email, password, name, lastname, age);
+      if (response.success) {
+        setAlertVisible(true);
+        setAlertMessage({title: 'Registro', message: 'Usuario registrado con éxito', screen: 'Login'});
       } else {
-        Alert.alert('Error', data.message);
+        setAlertType('error');
+        setAlertMessage({title: 'Error', message: 'Ha ocurrido un error'})
       }
     } catch (error) {
-      Alert.alert('Error', error.message);
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error. Por favor, inténtalo más tarde.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
+    <ImageBackground source={background} style={globalStyles.background}>
     <View style={styles.container}>
-      <Text style={styles.title}>Registro</Text>
+    <Text style={globalStyles.title}>Bienvenido a nuestra app</Text>
+    <Text style={globalStyles.subtituleLog}>Registrate para iniciar este nuevo camino.</Text>
       <TextInput
         style={styles.input}
         placeholder="Nombre de usuario"
@@ -81,15 +76,25 @@ const RegisterScreen=({ navigation }) => {
         onChangeText={setAge}
         keyboardType="numeric"
       />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+      <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.buttonText}>Registrarse</Text>
+        )}
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
+
+      <CustomAlert
+       visible={alertVisible}
+       title={alertMessage.title}
+       message={alertMessage.message}
+       onDismiss={() => setAlertVisible(false)}
+       screen={alertMessage.screen}
+      />
     </View>
+    </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -101,16 +106,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    textAlign: 'center',
   },
   input: {
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
+    backgroundColor: '#ffffff',
     marginBottom: 12,
     paddingHorizontal: 8,
-  },  
+    borderRadius: 4,
+  },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#6DACC8',
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 4,

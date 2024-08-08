@@ -1,26 +1,63 @@
-import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import importData from './importData';
+import React, { useState, useEffect } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import HabitDetailsModal from './DetailsHabit';
+import EditHabitModal from './Edit&Delete';
+import { completedHabit } from '../../Apis/habits';
+import importData from './importData';
+import CustomAlert from '../customAlert';
 
-const HabitList = ({ habits, navigation }) => {
+const HabitList = ({ habits, navigation, onRefresh }) => {
   const habitSummary = {
     total: habits.length,
   };
 
   const [importantInfo, setImportantInfo] = useState(null);
-
-
+  const [selectedHabit, setSelectedHabit] = useState(null);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
   const selectRandomInfo = () => {
     const randomIndex = Math.floor(Math.random() * importData.length);
     setImportantInfo(importData[randomIndex]);
   };
 
-  
-  useState(() => {
+  const handleGetCompleted = async(id) => {
+    try {
+      const response = await completedHabit(id);
+      if(response.success){
+        setAlertVisible(true);
+        setalertMessage({title: 'Completado', 'message': "El Hábito fue completado"});        
+      }else{
+        setAlertVisible(true);
+        setalertMessage({title: 'Error', 'message': "El Hábito no se pudo completado"});    
+      }
+    } catch (error) {
+      console.error(error);or(error);
+    }
+  }
+  useEffect(() => {
     selectRandomInfo();
   }, []);
+  const openHabitDetails = (habit) => {
+    setSelectedHabit(habit);
+    setDetailsModalVisible(true);
+  };
 
+  const closeModal = (refresh = false) => {
+    setSelectedHabit(null);
+    setDetailsModalVisible(false);
+    setEditModalVisible(false);
+    if(refresh){
+      onRefresh();
+    }
+  };
+
+  const openEditModal = (habit) => {
+    setSelectedHabit(habit);
+    setEditModalVisible(true);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -30,12 +67,6 @@ const HabitList = ({ habits, navigation }) => {
         </Text>
       </View>
 
-      <View style={styles.summary}>
-        <Text style={styles.summaryText}>Resumen de Hábitos</Text>
-        <Text style={styles.summaryItem}>Total de hábitos: {habitSummary.total}</Text>
-      </View>
-
-
       {importantInfo && (
         <View style={styles.importantInfo}>
           <Text style={styles.importantInfoTitle}>{importantInfo.title}</Text>
@@ -43,10 +74,10 @@ const HabitList = ({ habits, navigation }) => {
         </View>
       )}
 
-
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => navigation.navigate('CreateHabit')}>
+        onPress={() => navigation.navigate('CreateHabit')}
+      >
         <Text style={styles.createButtonText}>Crear Nuevo Hábito</Text>
       </TouchableOpacity>
 
@@ -57,9 +88,11 @@ const HabitList = ({ habits, navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.habitItem}
-              onPress={() => navigation.navigate('HabitDetails', { habit: item })} >
+              onPress={() => openHabitDetails(item)}
+            >
               <Text style={styles.habitText}>{item.name}</Text>
-              <FontAwesome name='check' size={24} color='#007bff'/>
+              <FontAwesome name='plus' size={16} color='#007bff' onPress={() => handleGetCompleted(item._id)} />
+              <FontAwesome name='pencil' size={16} color='#007bff' onPress={() => openEditModal(item)} />
             </TouchableOpacity>
           )}
           ListHeaderComponent={
@@ -69,12 +102,28 @@ const HabitList = ({ habits, navigation }) => {
           }
         />
       ) : (
-        // Mostrar mensaje cuando no hay hábitos registrados
         <View style={styles.noHabitsContainer}>
           <Text style={styles.noHabitsText}>No tienes hábitos registrados</Text>
           <Text style={styles.createHabitText}>Crea uno nuevo para empezar</Text>
         </View>
       )}
+
+      <HabitDetailsModal
+        visible={detailsModalVisible}
+        onDismiss={closeModal}
+        habitId={selectedHabit?._id}
+      />
+      <EditHabitModal
+        visible={editModalVisible}
+        onDismiss={() => closeModal(true)}
+        habit={selectedHabit}
+      />
+      <CustomAlert
+        visible={alertVisible}
+        title={alertMessage.title}
+        message={alertMessage.message}
+        onDismiss={() => setAlertVisible(false)}
+      />
     </View>
   );
 };
@@ -83,7 +132,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f7f9fc',
   },
   header: {
     marginBottom: 24,
@@ -91,32 +139,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#aaaaee',
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
-  },
-  summary: {
-    backgroundColor: '#e5e7eb',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 24,
-  },
-  summaryText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  summaryItem: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 4,
+    color: '#E6E6FA',
   },
   importantInfo: {
     backgroundColor: '#fff5e6',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 15,
     marginBottom: 24,
   },
   importantInfoTitle: {
@@ -131,55 +163,53 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   createButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#6DACC8',
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 8,
     alignSelf: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 24,
   },
   createButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
   habitItem: {
-    backgroundColor: '#fff',
+    backgroundColor: '#e7f7fe',
     padding: 16,
     borderRadius: 8,
-    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   habitText: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333',
+    fontSize: 16,
+    color: '#1a1a1a',
+    fontStyle: 'bold'
   },
   listHeader: {
-    backgroundColor: '#007bff',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   listHeaderText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#E6E6FA',
   },
   noHabitsContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 24,
   },
   noHabitsText: {
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   createHabitText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: '#007bff',
   },
 });
 

@@ -1,107 +1,72 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-const ipv4 = process.env.Ipv4 || '192.168.1.108:3000';
-
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ImageBackground } from 'react-native';
+import { LoginFunc } from '../Apis/authapis';
+import CustomAlert from './customAlert';
+import background from '../../assets/background.jpg';
+import globalStyles from '../../assets/css/globalCss';
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
   const handleLogin = async () => {
-    console.log('HandleLogin called');
+    setLoading(true);
     try {
-      const response = await fetch(`http://192.168.1.108:3000/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
-      });
-
-      console.log('Response received');
-
-      const responseJson = await response.json();
-      console.log('Response JSON:', responseJson);
-
-      if (responseJson.success) {
-        await AsyncStorage.setItem('token', responseJson.data);
-        Alert.alert('Login Success');
-        navigation.navigate('HomeHabit');
+      const response = await LoginFunc(username, password);
+      if (response.success) {
+        setalertMessage({title:"Inicio Sesión", message:"Inicio de sesion exitoso", screen: 'HomeHabit'});
+        setAlertVisible(true);
       } else {
-        Alert.alert(responseJson.message);
+        setalertMessage({title:'Error', message:"Contraseña o usuario incorrecto", screen: ''});
+        setAlertVisible(true);
       }
     } catch (error) {
-      console.log('Error:', error);
-      Alert.alert(error.message);
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a nuestra app</Text>
-      <Text style={styles.subtitle}>Descubre cómo nuestra aplicación puede simplificar tu vida.</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={background} style={globalStyles.background}>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.title}>Bienvenido a nuestra app</Text>
+        <Text style={globalStyles.subtituleLog}>Descubre cómo nuestra aplicación puede simplificar tu vida.</Text>
+        <TextInput
+          style={globalStyles.inputlogin}
+          placeholder="Nombre de usuario"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={globalStyles.inputlogin}
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={globalStyles.buttonlog} onPress={handleLogin} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Text style={globalStyles.buttonTextlog}>Iniciar Sesión</Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity style={globalStyles.registerButtonlog} onPress={() => navigation.navigate('Register')}>
+          <Text style={globalStyles.buttonTextlog}>Registrarse</Text>
+        </TouchableOpacity>
+        
+        <CustomAlert 
+          visible={alertVisible}
+          title={alertMessage.title}
+          message={alertMessage.message}
+          onDismiss={() => setAlertVisible(false)}
+          screen={alertMessage.screen}
+        />
+      </View>
+    </ImageBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
 
 export default LoginScreen;

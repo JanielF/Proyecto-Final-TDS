@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../Components/User/logOut';
 import { useNavigation } from '@react-navigation/native';
+import background from '../../assets/background.jpg';
+import globalStyles from '../../assets/css/globalCss';
 const SettingsScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation(); 
@@ -14,20 +16,21 @@ const SettingsScreen = () => {
   };
 
   return (
+    <ImageBackground source={background} style={globalStyles.background}>
     <View style={styles.container}>
 
       <TouchableOpacity style={styles.optionContainer} onPress={() => navigation.navigate('Profile')}>
-        <Icon name="user" size={24} color="#333" style={styles.icon} />
+        <Icon name="user" size={24} color="#FFFFFF" style={styles.icon} />
         <Text style={styles.optionText}>Perfil</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.optionContainer} onPress={() => navigation.navigate('ChangePassword')}>
-        <Icon name="lock" size={24} color="#333" style={styles.icon} />
+        <Icon name="lock" size={24} color="#FFFFFF" style={styles.icon} />
         <Text style={styles.optionText}>Cambiar Contraseña</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.optionContainer} onPress={() => setShowModal(true)}>
-        <Icon name="sign-out" size={24} color="#333" style={styles.icon} />
+        <Icon name="sign-out" size={24} color="#FFFFFF" style={styles.icon} />
         <Text style={styles.optionText}>Cerrar Sesión</Text>
       </TouchableOpacity>
 
@@ -38,6 +41,7 @@ const SettingsScreen = () => {
       />
 
     </View>
+    </ImageBackground>
   );
 };
 
@@ -45,12 +49,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f7f9fc',
+
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF',
     marginBottom: 24,
   },
   optionContainer: {
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 18,
     marginLeft: 16,
-    color: '#333',
+    color: '#FFFFFF',
   },
   icon: {
     marginRight: 16,

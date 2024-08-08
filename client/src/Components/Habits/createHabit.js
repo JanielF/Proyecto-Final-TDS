@@ -1,28 +1,31 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { createHabit } from '../../Apis/habits';
-
+import CustomAlert from '../customAlert';
+import background from '../../../assets/background.jpg';
+import globalStyles from '../../../assets/css/globalCss';
 const CreateHabit = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [frequency, setFrequency] = useState('');
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({ title: '', message: '', scree: ''});
     const handleCreateHabit = async () => {
         setLoading(true);
         try {
             const response = await createHabit(name, description, frequency, navigation);
-            if(response && response.success){
-                Alert.alert('Hábito creado exitosamente');
-                navigation.navigate('HomeHabit');
+            if(response.succes){
+                setAlertVisible(true);
+                setAlertMessage({title: 'Creado Correctamente', message: 'Hábito creado con éxito', screen: 'HomeHabit'});
             } else{
-                Alert.alert('Ha ocurrido un error intente mas tarde, ', response.message);
+                setAlertVisible(true);
+                setAlertMessage({title: 'Error', message: 'No se pudo crear el hábito', screen: ''});
             } 
-            console.log("Este es el response de creacion", response);
         } catch (error) {
             console.log(error);
         }finally{
@@ -31,8 +34,9 @@ const CreateHabit = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Crear Nuevo Hábito</Text>
+        <ImageBackground source={background} style={globalStyles.background}>
+        <View style={globalStyles.container}>
+            <Text style={globalStyles.title}>Crear Nuevo Hábito</Text>
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Nombre del hábito</Text>
@@ -82,7 +86,16 @@ const CreateHabit = () => {
                     {loading ? 'Creando...' : 'Crear Hábito'}
                 </Text>
             </TouchableOpacity>
+
+            <CustomAlert 
+                visible={alertVisible}
+                title={alertMessage.title}
+                message={alertMessage.message}
+                onDismiss={() => setAlertVisible(false)}
+                screen={alertMessage.screen}
+            />
         </View>
+        </ImageBackground>
     );
 };
 
@@ -95,10 +108,11 @@ const pickerSelectStyles = StyleSheet.create({
         borderColor: '#cccccc',
         borderRadius: 8,
         color: '#333333',
-        paddingRight: 30, // to ensure the text is never behind the icon
+        paddingRight: 30,
     },
     inputAndroid: {
         fontSize: 16,
+        width: 260,
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderWidth: 1,
@@ -106,15 +120,11 @@ const pickerSelectStyles = StyleSheet.create({
         borderRadius: 8,
         color: '#333333',
         paddingRight: 30,
+        backgroundColor: '#ffffff',
      },
 });
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#ffffff',
-    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -127,31 +137,36 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 8,
         fontWeight: 'bold',
-        color: '#333333',
+        color: '#1a1a1a',
     },
     input: {
         borderWidth: 1,
+        backgroundColor: '#ffffff',
+        width: '90%',
         borderColor: '#cccccc',
+        height: 40,
         borderRadius: 8,
-        paddingVertical: 12,
         paddingHorizontal: 16,
         fontSize: 16,
-        color: '#333333',
+        color: '#1a1a1a',
     },
     descriptionInput: {
         height: 100,
         textAlignVertical: 'top', 
     },
     createButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#6DACC8',
         borderRadius: 8,
         paddingVertical: 16,
         alignItems: 'center',
+        width: '400'
     },
     createButtonText: {
         color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
+        width: 260,
+        textAlign: 'center',
     },
 });
 

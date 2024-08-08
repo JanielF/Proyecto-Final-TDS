@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Animated, FlatList, StyleSheet, View } from "react-native";
+import { Animated, FlatList, ImageBackground, StyleSheet, View } from "react-native";
 import itemsboarding from "./itemsboarding";
 import NextButton from "./nextButton";
 import OnBoardingItems from "./onBoardingItems";
 import Paginator from "./paginator";
-
+import globalStyles from "../../../assets/css/globalCss";
+import background from "../../../assets/background.jpg"
 export default OnBoarding = () =>{
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -15,7 +16,8 @@ export default OnBoarding = () =>{
     const slideRef = useRef(null);
 
     return(
-        <View style={styles.container}>
+        <ImageBackground source={background} style={globalStyles.background}>
+            <View style={globalStyles.container}>
             <View style={{flex: 3}}>
                 <FlatList
                     data={itemsboarding}
@@ -36,13 +38,6 @@ export default OnBoarding = () =>{
             <Paginator  data={itemsboarding} scrollX={scrollX} />
             <NextButton percentage={(currentIndex + 1) * (100 / itemsboarding.length)}/>
         </View>
+        </ImageBackground>
     )
 }
-
-const styles = StyleSheet.create({
-    container : {
-        flex:1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-})
