@@ -10,7 +10,7 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
   const [frequency, setFrequency] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
+  const [alertMessage, setAlertMessage] = useState({ title: '', message: '', scree: ''});
  
 
   useEffect(() => {
@@ -25,30 +25,26 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
   const handleSave = async () => {
     setIsEditing(false);
     const response = await updateHabit(habit._id, name, description, frequency);
-    if (response.success) {
+    if (response) {
       setAlertVisible(true);
-      setAlertMessage({title: 'Editado Correctamente', message: 'Hábito editado con éxito', screen: 'HabitHome'});
+      setAlertMessage({title: 'Editado Correctamente', message: 'Hábito editado con éxito', screen: 'HomeHabit'});
     } else {
       setAlertVisible(true);
-      setalertMessage({title: 'Error', message: 'No se pudo editar el hábito', screen: ''});
+      setAlertMessage({title: 'Error', message: 'No se pudo editar el hábito', screen: ''});
     }
   };
 
-  const handleDelete = async () => {
-    setAlertMessage("¿Desea eliminar el hábito?");
-    setAlertType('confirmation');
-    setAlertVisible(true);
-  };
 
   const confirmDelete = async () => {
+    console.log('confirmDelete');
     const response = await deleteHabit(habit._id);
-    if (response.success) {
+    if (response) {
       setAlertVisible(true);
-      setalertMessage({title:"Eliminado", message:"Hábito eliminado con éxito", screen: 'HabitHome'});
+      setAlertMessage({title:"Eliminado", message:"Hábito eliminado con éxito", screen: 'HomeHabit'});
     } else {
-      
+      setAlertVisible(true);
+      setAlertMessage({title:"Error", message:"El hábito no se elimino", screen: ''});
     }
-    setAlertVisible(true);
   };
 
   return (
@@ -89,7 +85,7 @@ const EditHabitModal = ({ visible, onDismiss, habit, onDelete }) => {
             ]}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
               <Text style={styles.buttonText}>Eliminar</Text>
             </TouchableOpacity>
             <TouchableOpacity

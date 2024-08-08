@@ -118,11 +118,6 @@ const deleteHabit = async (req,res) => {
     try {
         const id = req.params.id;
         const habit = await HabitModel.findByIdAndDelete(id);
-        if(!habit){
-            return res.status(404).json({
-                message: 'Habit not found'
-            });
-        }
         return res.status(200).json({
             success:true,
             message: 'Habit deleted successfully',

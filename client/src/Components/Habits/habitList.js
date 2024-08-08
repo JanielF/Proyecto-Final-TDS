@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import HabitDetailsModal from './DetailsHabit';
 import EditHabitModal from './Edit&Delete';
@@ -8,38 +8,37 @@ import importData from './importData';
 import CustomAlert from '../customAlert';
 
 const HabitList = ({ habits, navigation, onRefresh }) => {
-  const habitSummary = {
-    total: habits.length,
-  };
-
   const [importantInfo, setImportantInfo] = useState(null);
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: ''});
+  const [alertMessage, setalertMessage] = useState({ title: '', message: '', scree: '' });
+
   const selectRandomInfo = () => {
     const randomIndex = Math.floor(Math.random() * importData.length);
     setImportantInfo(importData[randomIndex]);
   };
 
-  const handleGetCompleted = async(id) => {
+  const handleGetCompleted = async (id) => {
     try {
       const response = await completedHabit(id);
-      if(response.success){
+      if (response.success) {
         setAlertVisible(true);
-        setalertMessage({title: 'Completado', 'message': "El Hábito fue completado"});        
-      }else{
+        setalertMessage({ title: 'Completado', message: "El Hábito fue completado" });
+      } else {
         setAlertVisible(true);
-        setalertMessage({title: 'Error', 'message': "El Hábito no se pudo completado"});    
+        setalertMessage({ title: 'Error', message: "El Hábito no se pudo completar" });
       }
     } catch (error) {
-      console.error(error);or(error);
+      console.error(error);
     }
-  }
+  };
+
   useEffect(() => {
     selectRandomInfo();
   }, []);
+
   const openHabitDetails = (habit) => {
     setSelectedHabit(habit);
     setDetailsModalVisible(true);
@@ -49,7 +48,7 @@ const HabitList = ({ habits, navigation, onRefresh }) => {
     setSelectedHabit(null);
     setDetailsModalVisible(false);
     setEditModalVisible(false);
-    if(refresh){
+    if (refresh) {
       onRefresh();
     }
   };
@@ -58,6 +57,7 @@ const HabitList = ({ habits, navigation, onRefresh }) => {
     setSelectedHabit(habit);
     setEditModalVisible(true);
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -91,8 +91,10 @@ const HabitList = ({ habits, navigation, onRefresh }) => {
               onPress={() => openHabitDetails(item)}
             >
               <Text style={styles.habitText}>{item.name}</Text>
-              <FontAwesome name='plus' size={16} color='#007bff' onPress={() => handleGetCompleted(item._id)} />
-              <FontAwesome name='pencil' size={16} color='#007bff' onPress={() => openEditModal(item)} />
+              <View style={styles.iconContainer}>
+                <FontAwesome name="plus" size={16} color="#007bff" onPress={() => handleGetCompleted(item._id)} style={styles.icon} />
+                <FontAwesome name="pencil" size={16} color="#007bff" onPress={() => openEditModal(item)} style={styles.icon} />
+              </View>
             </TouchableOpacity>
           )}
           ListHeaderComponent={
@@ -188,7 +190,15 @@ const styles = StyleSheet.create({
   habitText: {
     fontSize: 16,
     color: '#1a1a1a',
-    fontStyle: 'bold'
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  icon: {
+    marginLeft: 12, // Espacio entre los íconos
   },
   listHeader: {
     marginBottom: 8,
