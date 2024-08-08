@@ -95,16 +95,15 @@ export const deleteHabit = async (id) => {
                 'Authorization': `Bearer ${token}`
             },
         });
-
-        if (response.ok) {
-            Alert.alert('Éxito', 'Hábito eliminado exitosamente');
+        console.log("Habito eliminado",response)
+        const responsedata = await response.json();
+        console.log("responsedata",responsedata)
+        if (responsedata.success) {
             return true;
         } else {
-            Alert.alert('Error', 'No se pudo eliminar el hábito');
             return false;
         }
     } catch (error) {
-        Alert.alert('Error interno', 'Ocurrió un error al intentar eliminar el hábito');
         console.log(error);
         return false;
     }
@@ -133,18 +132,17 @@ export const updateHabit = async (idhabit, name, description, frequency) => {
                 frequency, 
                 userId }),
         });
+        console.log(response);
         const responseData = await response.json();
-        console.log(responseData);
-        if (responseData.succes) {
-            Alert.alert('Éxito', 'Hábito actualizado exitosamente');
+        console.log("Habito editado",responseData);
+
+        if (responseData.succes){
             return true;
         } else {
             console.error(responseData.message);
-            Alert.alert('Error', `No se pudo actualizar el hábito: ${responseData.message}`);
             return false;
         }
     } catch (error) {
-        Alert.alert('Error interno', 'Ocurrió un error al intentar actualizar el hábito');
         console.error(error);
         return false;
     }
